@@ -1,32 +1,21 @@
-import jwt from 'jsonwebtoken';
-import User from "../models/userModel.js"
+import jwt from "jsonwebtoken";
+import User from "../models/userModel.js";
 
 const authMiddleware = async (req, res, next) => {
-    const token = req.header('Authorization');
+    const token = req.cookies.token;
     if (!token) {
-        return res.status(401).json({ message: "Unauthorized HTTP, Token not provided" });
+        return res.status(401).json({ message: "Unauthorized, token not provided" });
     }
 
-    const jwtToken = token.replace(/^Bearer\s/, "").trim();
-
     try {
-        const isVerified = jwt.verify(jwtToken, process.env.JWT_SECRET_KEY);
-        const userData = await User.findOne({ _id: isVerified._id }).select({ password: 0 });
-
-        if (!userData) {
-            console.log("User not found");
-            return res.status(401).json({ message: "User not found" });
-        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const userData = await User.findById(decoded._id).select("-password");
+        if (!userData) return res.status(401).json({ message: "User not found" });
         req.user = userData;
-        req.token = token;
         req.userID = userData._id;
         next();
     } catch (err) {
-        const error = {
-            statusCode: 500,
-            message: err.message
-        }
-        return next(error)
+        return next({ statusCode: 500, message: err.message });
     }
 };
 

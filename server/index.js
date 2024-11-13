@@ -5,6 +5,7 @@ import errorHandler from './middleware/error-middleware.js';
 import userRouter from './router/user.js';
 import messageRouter from './router/message.js';
 import cors from "cors"
+import cookieParser from 'cookie-parser';
 const app = express();
 
 
@@ -13,6 +14,7 @@ const corsOptions = {
     credentials: true,
 };
 
+app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api",userRouter)
