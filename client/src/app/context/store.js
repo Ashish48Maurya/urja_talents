@@ -5,9 +5,15 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [selectedUser,setSelectedUser] = useState(null);
+    const [messages, setMessages] = useState([
+        {
+          message: "",
+          date: ""
+        }
+      ]);
     return (
         <AuthContext.Provider
-            value={{ selectedUser,setSelectedUser }}
+            value={{ selectedUser,setSelectedUser,messages, setMessages }}
         >
             {children}
         </AuthContext.Provider>

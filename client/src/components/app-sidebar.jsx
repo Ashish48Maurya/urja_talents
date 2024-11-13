@@ -18,7 +18,7 @@ import { useAuth } from "@/app/context/store";
 export function AppSidebar({ ...props }) {
     const [searchQuery, setSearchQuery] = React.useState("");
     const [otherUsers, setOtherUsers] = React.useState([]);
-    const { selectedUser, setSelectedUser } = useAuth();
+    const { selectedUser, setSelectedUser, setMessages } = useAuth();
 
     React.useEffect(() => {
         const fetchOtherUsers = async () => {
@@ -46,6 +46,7 @@ export function AppSidebar({ ...props }) {
     );
 
     const handleUserClick = (user) => {
+        setMessages([])
         setSelectedUser(user);
     };
 

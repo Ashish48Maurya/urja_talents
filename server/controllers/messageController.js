@@ -24,7 +24,7 @@ export const sendMessage = async (req, res, next) => {
         }
 
         let gotConversation = await Conversation.findOne({
-            participants: [senderId, receiverId],
+            participants: { $all:[senderId, receiverId]},
         });
 
         if (!gotConversation) {
@@ -41,7 +41,7 @@ export const sendMessage = async (req, res, next) => {
         // await newMessage.save();
 
         // if(newMessage){
-        gotConversation.messages.push({ message, createdAt: new Date() });
+        gotConversation.messages.push({ message, createdAt: new Date(), user:senderId});
         await gotConversation.save();
         res.status(200).json({ message: "Msg sent Successfully", success: true })
         // };
@@ -65,9 +65,8 @@ export const getMessages = async (req, res, next) => {
             }
             return next(error)
         }
-
         let gotConversation = await Conversation.findOne({
-            participants: [senderId, receiverId],
+            participants: {$all :[senderId, receiverId]},
         });
 
         if (!gotConversation) {
@@ -77,8 +76,7 @@ export const getMessages = async (req, res, next) => {
             }
             return next(error)
         }
-
-        let messages = gotConversation.messages.sort((a, b) => b.createdAt - a.createdAt);
+        let messages = gotConversation.messages.sort((a, b) => a.createdAt - b.createdAt);
         res.status(200).json({messages,success:true});
     }
     catch (err) {
