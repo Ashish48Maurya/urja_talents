@@ -4,8 +4,16 @@ import mongoConnect from './db.js';
 import errorHandler from './middleware/error-middleware.js';
 import userRouter from './router/user.js';
 import messageRouter from './router/message.js';
+import cors from "cors"
 const app = express();
 
+
+const corsOptions = {
+    origin: 'http://localhost:3000', 
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api",userRouter)
 app.use("/api",messageRouter)
