@@ -4,7 +4,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { useAuth } from "@/app/context/store"
-import {useState } from "react";
+import { useState } from "react";
 import { AppSidebar } from "./app-sidebar"
 import MessageInp from "./MessageInp";
 import Header from "./Header";
@@ -12,24 +12,26 @@ import Messages from "./Messages";
 
 export default function Hello() {
   const { selectedUser } = useAuth();
-  const [message, setMessage] = useState("");  
+  const [message, setMessage] = useState("");
 
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <Header/>
+        <Header />
         {selectedUser ? (
           <div className="flex flex-col h-[90vh]">
-            <Messages/>
+            <Messages />
             <MessageInp setMessage={setMessage} message={message} />
           </div>
         ) : (
-          <div className="flex min-h-100 justify-center items-center my-auto text-orange-600 text-2xl">
-            Start Message
+          <div className="flex flex-1 items-center justify-center text-center">
+            <div className="text-gray-500 text-2xl font-semibold animate-pulse">
+              Start a Conversation
+            </div>
           </div>
         )}
       </SidebarInset>
-    </SidebarProvider>
+    </SidebarProvider >
   );
 }

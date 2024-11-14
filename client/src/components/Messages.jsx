@@ -26,7 +26,6 @@ export default function Messages() {
                         toast.error("Failed to fetch messages.");
                     }
                 } else {
-                    toast.error("Conversation Not Found");
                     setMessages([]);
                 }
             } catch (error) {
@@ -40,7 +39,16 @@ export default function Messages() {
     return (
         <div className="flex-1 overflow-y-auto p-2 space-y-2">
             {messages.length === 0 ? (
-                <h1>No Message</h1>
+                <div className="flex flex-col h-full items-center justify-center text-center mt-10 p-4">
+                    <img
+                       src={"/message.png" || "/default-image.png"}
+                        alt="No messages"
+                        className="w-24 h-24 mb-4 opacity-75"
+                    />
+                    <h2 className="text-lg font-semibold text-gray-600">No messages yet!</h2>
+                    <p className="text-gray-500">Start the conversation by sending a message below.</p>
+                </div>
+                
             ) : (
                 messages.map((item, index) => (
                     <div ref={scroll} key={index}>

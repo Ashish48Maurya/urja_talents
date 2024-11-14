@@ -62,23 +62,23 @@ export function AppSidebar({ ...props }) {
                     <SidebarMenu className="gap-2">
                         {filteredData.map((item) => (
                             <SidebarMenuItem
-                                className={`hover:bg-sidebar-hover transition-colors ${selectedUser === item._id ? "bg-sidebar-selected" : ""
+                                className={`hover:bg-sidebar-hover transition-colors ${selectedUser === item.user?._id ? "bg-sidebar-selected" : ""
                                     }`}
-                                key={item._id}
-                                onClick={() => handleUserClick(item)}
+                                key={item?.user?._id}
+                                onClick={() => handleUserClick(item.user)}
                             >
                                 <SidebarMenuButton size="lg">
                                     <div className="relative">
                                         <Avatar>
-                                            <AvatarImage src={item.profilePhoto} />
+                                            <AvatarImage src={item.user?.profilePhoto} />
                                         </Avatar>
                                         {
-                                            onlineUser?.includes(item?._id) && <span class="absolute top-1 left-8 transform -translate-y-1/2 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></span>
+                                            onlineUser?.includes(item.user?._id) && <span class="absolute top-1 left-8 transform -translate-y-1/2 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></span>
                                         }
                                     </div>
                                     <div className="flex flex-col gap-0.5 leading-none">
-                                        <span className="font-semibold mr-2">{item.fullName}</span>
-                                        <span>{item.email}</span>
+                                        <span className="font-semibold mr-2">{item.user?.fullName}</span>
+                                        <span>{item.message}</span>
                                     </div>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>

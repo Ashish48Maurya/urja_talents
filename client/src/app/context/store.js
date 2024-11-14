@@ -9,7 +9,13 @@ export const AuthProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [userInfo, setUserInfo] = useState(null)
     const [onlineUser, setOnlineuser] = useState(null)
-    const [otherUsers, setOtherUsers] = useState([]);
+    const [otherUsers, setOtherUsers] = useState([
+        {
+            message: "Start Chatting",
+            user: null
+        }
+    ]);
+    // const [otherUsers, setOtherUsers] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [messages, setMessages] = useState([
         {
@@ -70,7 +76,7 @@ export const AuthProvider = ({ children }) => {
         } else {
             console.log("Waiting for user info...");
         }
-    }, [userInfo,selectedUser]);
+    }, [userInfo, selectedUser]);
 
     const fetchOtherUsers = async () => {
         try {
@@ -80,7 +86,20 @@ export const AuthProvider = ({ children }) => {
             });
             const result = await response.json();
             if (result.success) {
-                setOtherUsers(result.otherUsers);
+                const updatedUsers = result.otherUsers.map((userDoc) => {
+                    const conversation = result.message.find((item) =>
+                        item.participants.some(participantId => participantId.toString() === userDoc._id)
+                    );
+                    let lastMessageText = "Start Chatting";
+                    if (conversation && conversation.messages.length > 0) {
+                        lastMessageText = conversation.messages[conversation.messages.length - 1].message;
+                    }
+                    return {
+                        message: lastMessageText,
+                        user: userDoc 
+                    };
+                });
+                setOtherUsers(updatedUsers);
             }
         } catch (error) {
             console.error("Failed to fetch users", error);
@@ -89,7 +108,7 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         fetchOtherUsers();
-    }, []);
+    }, [userInfo]);
 
     return (
         <AuthContext.Provider

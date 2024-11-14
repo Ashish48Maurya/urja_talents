@@ -4,9 +4,10 @@ import { Avatar, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import { Input } from './ui/input'
 
 export default function Header() {
-    const { selectedUser, setSelectedUser, setUserInfo, onlineUser, isTyping } = useAuth()
+    const { selectedUser, setSelectedUser, setUserInfo, onlineUser, isTyping, messages } = useAuth()
     const router = useRouter();
     const handleLogout = async () => {
         try {
@@ -44,6 +45,13 @@ export default function Header() {
                     </div>
                 </div>
             )}
+            {
+                messages.length > 0 && <Input
+                    type="text"
+                    placeholder="Search Message..."
+                    className=" w-[150px] text-center"
+                />
+            }
             <Button onClick={handleLogout}>Logout</Button>
         </header>
     )

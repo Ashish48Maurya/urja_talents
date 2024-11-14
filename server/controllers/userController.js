@@ -1,6 +1,7 @@
 import User from "../models/userModel.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import { Conversation } from "../models/conversationModel.js";
 
 export const register = async (req, res, next) => {
     const { fullName, password, email, profilePhoto } = req.body;
@@ -106,9 +107,10 @@ export const login = async (req, res, next) => {
 
 export const getOtherUsers = async (req, res) => {
     try {
-        const loggedInUserId = req.userID;
-        const otherUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
-        return res.status(200).json({ otherUsers, success: true });
+        const senderId = req.userID;
+        const otherUsers = await User.find({ _id: { $ne: senderId } }).select("-password");
+        const message = await Conversation.find({participants: {$all :[senderId]}})
+        return res.status(200).json({ otherUsers,message, success: true });
     } catch (err) {
         const error = {
             statusCode: 500,
