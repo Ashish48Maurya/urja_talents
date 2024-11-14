@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
     const [userInfo, setUserInfo] = useState(null)
     const [onlineUser, setOnlineuser] = useState(null)
     const [otherUsers, setOtherUsers] = useState([]);
+    const [isTyping, setIsTyping] = useState(false);
     const [messages, setMessages] = useState([
         {
             message: "",
@@ -42,10 +43,25 @@ export const AuthProvider = ({ children }) => {
                     userId: userInfo._id
                 }
             });
-
             setSocket(socketInstance);
             socketInstance.on('getOnlineUsers', (onlineUsers) => {
                 setOnlineuser(onlineUsers)
+            });
+
+            socketInstance.on('receiveMessage', (messageData) => {
+                setMessages((prevMessages) => [...prevMessages, messageData]);
+            });
+
+            socketInstance.on("userTyping", ({ userId }) => {
+                if (selectedUser && selectedUser._id === userId) {
+                    setIsTyping(true);
+                }
+            });
+
+            socketInstance.on("userStoppedTyping", ({ userId }) => {
+                if (selectedUser && selectedUser._id === userId) {
+                    setIsTyping(false);
+                }
             });
 
             return () => {
@@ -54,7 +70,7 @@ export const AuthProvider = ({ children }) => {
         } else {
             console.log("Waiting for user info...");
         }
-    }, [userInfo]);
+    }, [userInfo,selectedUser]);
 
     const fetchOtherUsers = async () => {
         try {
@@ -70,14 +86,14 @@ export const AuthProvider = ({ children }) => {
             console.error("Failed to fetch users", error);
         }
     };
-    
+
     useEffect(() => {
         fetchOtherUsers();
     }, []);
 
     return (
         <AuthContext.Provider
-            value={{ selectedUser, onlineUser, fetchOtherUsers, setSelectedUser, messages,otherUsers, setOtherUsers, setMessages, userInfo, setUserInfo }}
+            value={{ selectedUser, isTyping, onlineUser, socket, fetchOtherUsers, setSelectedUser, messages, otherUsers, setOtherUsers, setMessages, userInfo, setUserInfo }}
         >
             {children}
         </AuthContext.Provider>

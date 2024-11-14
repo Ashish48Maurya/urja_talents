@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
 export default function Header() {
-    const { selectedUser, setSelectedUser, setUserInfo, onlineUser } = useAuth()
+    const { selectedUser, setSelectedUser, setUserInfo, onlineUser, isTyping } = useAuth()
     const router = useRouter();
     const handleLogout = async () => {
         try {
@@ -32,13 +32,14 @@ export default function Header() {
                     <div className="relative">
                         <Avatar>
                             <AvatarImage src={selectedUser?.profilePhoto} />
-
                         </Avatar>
                     </div>
                     <div className="flex flex-col gap-0.5 leading-none">
                         <span className="font-semibold mr-2 text-xl">{selectedUser?.fullName}</span>
                         {
-                            onlineUser?.includes(selectedUser?._id) && <span>Online</span>
+                            onlineUser?.includes(selectedUser?._id) ? (
+                                isTyping ? <span>Typing...</span> : <span>Online</span>
+                            ) : <span>Offline</span>
                         }
                     </div>
                 </div>

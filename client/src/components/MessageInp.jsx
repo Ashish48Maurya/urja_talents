@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { IoSendSharp } from 'react-icons/io5';
@@ -6,8 +6,8 @@ import { useAuth } from '@/app/context/store';
 import toast from 'react-hot-toast';
 
 export default function MessageInp({ message, setMessage }) {
-    const {selectedUser,setMessages} = useAuth();
-    
+    const { selectedUser, setMessages, socket, userInfo } = useAuth();
+
     const handleMessageSend = async () => {
         if (!message) return;
         try {
@@ -25,6 +25,15 @@ export default function MessageInp({ message, setMessage }) {
                     ...prevMessages,
                     { message, createdAt: new Date() },
                 ]);
+
+                const messageData = {
+                    user: userInfo._id,
+                    receiverId: selectedUser?._id,
+                    message,
+                    createdAt: new Date(),
+                }
+                socket?.emit('sendMessage', messageData);
+
             } else {
                 toast.error("Message send failed:", data.message);
             }
@@ -34,13 +43,32 @@ export default function MessageInp({ message, setMessage }) {
             setMessage("");
         }
     };
+
+    let typingTimer;
+    const handleTyping = (e) => {
+        setMessage(e.target.value);
+        clearTimeout(typingTimer);
+        if (socket && selectedUser) {
+            socket.emit('typing', { userId: userInfo._id, receiverId: selectedUser?._id});
+        }
+        typingTimer = setTimeout(() => {
+            if (socket && selectedUser) {
+                socket.emit('stopTyping', { userId: userInfo._id, receiverId: selectedUser?._id });
+            }
+        }, 1000);
+    };
+
+    useEffect(() => {
+        return () => clearTimeout(typingTimer);
+    }, []);
+
     return (
         <div className="flex items-center p-2 border-t bg-white sticky bottom-0">
             <Input
                 type="text"
                 placeholder="Enter Message..."
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={handleTyping}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault();

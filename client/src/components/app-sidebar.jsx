@@ -15,14 +15,10 @@ import {
 import { Input } from "./ui/input";
 import Fuse from "fuse.js";
 import { useAuth } from "@/app/context/store";
-import { io } from "socket.io-client";
-import { useRouter } from "next/navigation";
 
 export function AppSidebar({ ...props }) {
-    const router = useRouter()
         ; const [searchQuery, setSearchQuery] = React.useState("");
     const { selectedUser, setSelectedUser, setMessages,onlineUser, otherUsers } = useAuth();
-
 
     const fuse = React.useMemo(() => new Fuse(otherUsers, { keys: ["fullName"], threshold: 0.6 }), [otherUsers]);
 
@@ -31,10 +27,11 @@ export function AppSidebar({ ...props }) {
         [searchQuery, fuse]
     );
 
-    const handleUserClick = (user) => {
-        setMessages([])
+    const handleUserClick = React.useCallback((user) => {
+        setMessages([]);
         setSelectedUser(user);
-    };
+    }, [setMessages, setSelectedUser]);
+    
 
     return (
         <Sidebar variant="floating" {...props}>

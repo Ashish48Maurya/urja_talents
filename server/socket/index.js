@@ -15,59 +15,38 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
     const userId = socket.handshake.query.userId
-    console.log(userId);
     if (userId !== undefined) {
         userSocketMap[userId] = socket.id;
     }
-    console.log("User Connnected: ", socket.id);
+    io.emit('getOnlineUsers', Object.keys(userSocketMap));
 
-    io.emit('getOnlineUsers',Object.keys(userSocketMap));
+    socket.on('sendMessage', (messageData) => {
+        const { receiverId } = messageData;
+        const recipientSocketId = userSocketMap[receiverId];
+
+        if (recipientSocketId) {
+            io.to(recipientSocketId).emit('receiveMessage', messageData);
+        }
+    });
+
+    socket.on('typing', ({ userId, receiverId }) => {
+        const recipientSocketId = userSocketMap[receiverId];
+        if (recipientSocketId) {
+            io.to(recipientSocketId).emit('userTyping', { userId });
+        }
+    });
+
+    socket.on('stopTyping', ({ userId, receiverId }) => {
+        const recipientSocketId = userSocketMap[receiverId];
+        if (recipientSocketId) {
+            io.to(recipientSocketId).emit('userStoppedTyping', { userId });
+        }
+    });
 
     socket.on('disconnect', () => {
-        console.log("User Disconnected:", socket.id);
         if (userId && userSocketMap[userId] === socket.id) {
             delete userSocketMap[userId];
         }
         io.emit('getOnlineUsers', Object.keys(userSocketMap));
     });
 })
-
-// import {Server} from "socket.io";
-// import http from "http";
-// import express from "express";
-
-// const app = express();
-
-// const server = http.createServer(app);
-// const io = new Server(server, {
-//     cors:{
-//         origin:['http://localhost:3000'],
-//         methods:['GET', 'POST'],
-//     },
-// });
-
-// export const getReceiverSocketId = (receiverId) => {
-//     return userSocketMap[receiverId];
-// }
-
-// const userSocketMap = {}; // {userId->socketId}
-
-
-// io.on('connection', (socket)=>{
-//     const userId = socket.handshake.query.userId
-//     if(userId !== undefined){
-//         userSocketMap[userId] = socket.id;
-//     }
-
-//     io.emit('getOnlineUsers',Object.keys(userSocketMap));
-
-//     socket.on('disconnect', ()=>{
-//         delete userSocketMap[userId];
-//         io.emit('getOnlineUsers',Object.keys(userSocketMap));
-//     })
-
-// })
-
-// export {app, io, server};
-
-
