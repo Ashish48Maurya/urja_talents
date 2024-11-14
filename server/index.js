@@ -6,7 +6,7 @@ import userRouter from './router/user.js';
 import messageRouter from './router/message.js';
 import cors from "cors"
 import cookieParser from 'cookie-parser';
-const app = express();
+import {app,server} from "./socket/index.js"
 
 
 const corsOptions = {
@@ -21,7 +21,7 @@ app.use("/api",userRouter)
 app.use("/api",messageRouter)
 app.use(errorHandler)
 
-app.listen(process.env.PORT, async ()=>{
+server.listen(process.env.PORT, async ()=>{
     await mongoConnect(process.env.MONGOURI)
     console.log(`Backend is Live 🎉🎉`)
 })

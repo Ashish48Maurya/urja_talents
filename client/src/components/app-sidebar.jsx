@@ -15,29 +15,14 @@ import {
 import { Input } from "./ui/input";
 import Fuse from "fuse.js";
 import { useAuth } from "@/app/context/store";
+import { io } from "socket.io-client";
+import { useRouter } from "next/navigation";
 
 export function AppSidebar({ ...props }) {
-    const [searchQuery, setSearchQuery] = React.useState("");
-    const [otherUsers, setOtherUsers] = React.useState([]);
-    const { selectedUser, setSelectedUser, setMessages } = useAuth();
+    const router = useRouter()
+        ; const [searchQuery, setSearchQuery] = React.useState("");
+    const { selectedUser, setSelectedUser, setMessages,onlineUser, otherUsers } = useAuth();
 
-    React.useEffect(() => {
-        const fetchOtherUsers = async () => {
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/users`, {
-                    method: "GET",
-                    credentials: "include",
-                });
-                const result = await response.json();
-                if (result.success) {
-                    setOtherUsers(result.otherUsers);
-                }
-            } catch (error) {
-                console.error("Failed to fetch users", error);
-            }
-        };
-        fetchOtherUsers();
-    }, []);
 
     const fuse = React.useMemo(() => new Fuse(otherUsers, { keys: ["fullName"], threshold: 0.6 }), [otherUsers]);
 
@@ -90,7 +75,9 @@ export function AppSidebar({ ...props }) {
                                         <Avatar>
                                             <AvatarImage src={item.profilePhoto} />
                                         </Avatar>
-                                        <span class="absolute top-1 left-8 transform -translate-y-1/2 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></span>
+                                        {
+                                            onlineUser?.includes(item?._id) && <span class="absolute top-1 left-8 transform -translate-y-1/2 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></span>
+                                        }
                                     </div>
                                     <div className="flex flex-col gap-0.5 leading-none">
                                         <span className="font-semibold mr-2">{item.fullName}</span>

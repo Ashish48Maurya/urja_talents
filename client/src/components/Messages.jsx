@@ -57,7 +57,7 @@ export default function Messages() {
                                     />
                                 </div>
                             </div>
-                            <div className="chat-bubble">{item?.message}</div>
+                            <div className={`chat-bubble ${item?.user !== selectedUser._id ? 'chat-bubble-success' : ''}`}>{item?.message}</div>
                             <span className="text-xs text-black font-semibold">
                                 {new Date(item?.createdAt).toLocaleString("en-US", {
                                     month: "short",

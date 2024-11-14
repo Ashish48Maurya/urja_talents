@@ -79,7 +79,7 @@ export const login = async (req, res, next) => {
             // });
 
             return res.status(200).cookie("token", token, {
-                maxAge: 60 * 60 * 24 * 7,
+                maxAge: 60 * 60 * 24 * 7 * 1000,
                 httpOnly: true,
                 sameSite: 'strict',
                 path: '/'

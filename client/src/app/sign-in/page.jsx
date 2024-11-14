@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../context/store";
 
 export const description =
     "A login form with email and password. There's an option to login with Google and a link to sign up if you don't have an account.";
@@ -27,6 +28,7 @@ export default function Page() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const {fetchOtherUsers} = useAuth();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -44,6 +46,7 @@ export default function Page() {
             const data = await response.json();
             if (data.success) {
                 toast.success("Login successful!");
+                fetchOtherUsers();
                 router.push('/')
             } else {
                 toast.error(data.message || "Login failed. Please try again.");
