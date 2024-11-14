@@ -2,6 +2,7 @@
 import * as React from "react";
 import { GalleryVerticalEnd } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
 import {
     Sidebar,
     SidebarContent,
@@ -85,10 +86,11 @@ export function AppSidebar({ ...props }) {
                                 onClick={() => handleUserClick(item)}
                             >
                                 <SidebarMenuButton size="lg">
-                                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground relative">
+                                    <div className="relative">
                                         <Avatar>
                                             <AvatarImage src={item.profilePhoto} />
                                         </Avatar>
+                                        <span class="absolute top-1 left-8 transform -translate-y-1/2 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></span>
                                     </div>
                                     <div className="flex flex-col gap-0.5 leading-none">
                                         <span className="font-semibold mr-2">{item.fullName}</span>

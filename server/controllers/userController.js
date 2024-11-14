@@ -107,7 +107,6 @@ export const login = async (req, res, next) => {
 export const getOtherUsers = async (req, res) => {
     try {
         const loggedInUserId = req.userID;
-        console.log(loggedInUserId)
         const otherUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
         return res.status(200).json({ otherUsers, success: true });
     } catch (err) {
@@ -130,3 +129,16 @@ export const logout = async (req, res) => {
     });
 }
 
+export const user = async(req,res)=>{
+    try {
+        const loggedInUserId = req.userID;
+        const user = await User.find({ _id: loggedInUserId }).select("-password");
+        return res.status(200).json({ user, success: true });
+    } catch (err) {
+        const error = {
+            statusCode: 500,
+            message: err.message
+        }
+        next(error)
+    }
+}
