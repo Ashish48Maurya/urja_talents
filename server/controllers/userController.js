@@ -2,6 +2,7 @@ import User from "../models/userModel.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { Conversation } from "../models/conversationModel.js";
+import { encrypt,decrypt } from "../utils/feature.js";
 
 export const register = async (req, res, next) => {
     const { fullName, password, email, profilePhoto } = req.body;
@@ -24,10 +25,10 @@ export const register = async (req, res, next) => {
         }
         const hashedPassword = await bcrypt.hash(password, 12)
         const user = new User({
-            fullName,
-            email,
+            fullName : encrypt(fullName),
+            email : encrypt(email),
             password: hashedPassword,
-            profilePhoto
+            profilePhoto : encrypt(profilePhoto)
         });
         await user.save();
         return res.status(200).json({ message: "Registration Successfull", success: true });
@@ -52,7 +53,7 @@ export const login = async (req, res, next) => {
     }
 
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: encrypt(email) });
         if (!user) {
             const error = {
                 statusCode: 404,
@@ -67,18 +68,6 @@ export const login = async (req, res, next) => {
             const token = jwt.sign({ _id: user.id }, secretKey, {
                 expiresIn: '7d'
             });
-            // res.setHeader('Set-Cookie', serialize('authToken', token, {
-            //     httpOnly: true,
-            //     secure: process.env.NODE_ENV === 'production',
-            //     maxAge: 60 * 60 * 24 * 7,
-            //     path: '/',
-            // }));
-
-            // return res.status(200).json({
-            //     success: true,
-            //     message: "Login successful",
-            // });
-
             return res.status(200).cookie("token", token, {
                 maxAge: 60 * 60 * 24 * 7 * 1000,
                 httpOnly: true,
@@ -86,7 +75,7 @@ export const login = async (req, res, next) => {
                 path: '/'
             }).json({
                 success: true,
-                message: "Login successful"
+                message: "Login successful",
             });
 
         } else {
@@ -109,8 +98,29 @@ export const getOtherUsers = async (req, res) => {
     try {
         const senderId = req.userID;
         const otherUsers = await User.find({ _id: { $ne: senderId } }).select("-password");
-        const message = await Conversation.find({participants: {$all :[senderId]}})
-        return res.status(200).json({ otherUsers,message, success: true });
+        const decryptedUsers = otherUsers.map((user) => {
+            const userObject = user.toObject();
+            return {
+                ...userObject, 
+                fullName: decrypt(userObject.fullName),
+                profilePhoto: userObject.profilePhoto ? decrypt(userObject.profilePhoto) : null,
+                email: decrypt(userObject.email),
+            };
+        });
+        const messages = await Conversation.find({participants: {$all :[senderId]}})
+        const decryptedConversations = messages.map((conversation) => {
+            const decryptedMessages = conversation.messages.map((msg) => ({
+                ...msg.toObject(),
+                message: decrypt(msg.message),
+            }));
+
+            return {
+                ...conversation.toObject(),
+                messages: decryptedMessages,
+            };
+        });
+
+        return res.status(200).json({ otherUsers:decryptedUsers,message:decryptedConversations, success: true });
     } catch (err) {
         const error = {
             statusCode: 500,
@@ -131,16 +141,26 @@ export const logout = async (req, res) => {
     });
 }
 
-export const user = async(req,res)=>{
+export const user = async (req, res, next) => {
     try {
         const loggedInUserId = req.userID;
-        const user = await User.find({ _id: loggedInUserId }).select("-password");
-        return res.status(200).json({ user, success: true });
+        const user = await User.findById(loggedInUserId).select("-password");
+        if (!user) {
+            return res.status(404).json({ message: "User not found", success: false });
+        }
+        const userObject = user.toObject();
+        const decUser = {
+            ...userObject,
+            fullName: decrypt(userObject.fullName),
+            profilePhoto: userObject.profilePhoto ? decrypt(userObject.profilePhoto) : null,
+            email: decrypt(userObject.email),
+        };
+        return res.status(200).json({ user: decUser, success: true });
     } catch (err) {
         const error = {
             statusCode: 500,
             message: err.message
-        }
-        next(error)
+        };
+        next(error);
     }
-}
+};

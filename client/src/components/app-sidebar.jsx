@@ -18,20 +18,19 @@ import { useAuth } from "@/app/context/store";
 
 export function AppSidebar({ ...props }) {
     const [searchQuery, setSearchQuery] = React.useState("");
-    const { selectedUser, setSelectedUser, setMessages,onlineUser, otherUsers } = useAuth();
+    const { selectedUser, setSelectedUser, setMessages, onlineUser, otherUsers } = useAuth();
 
-    const fuse = React.useMemo(() => new Fuse(otherUsers, { keys: ["fullName"], threshold: 0.6 }), [otherUsers]);
+    const fuse = React.useMemo(() => new Fuse(otherUsers, { keys: ["user.fullName"], threshold: 0.6 }), [otherUsers]);
 
     const filteredData = React.useMemo(
         () => (searchQuery ? fuse.search(searchQuery).map((result) => result.item) : otherUsers),
         [searchQuery, fuse]
     );
-
     const handleUserClick = React.useCallback((user) => {
         setMessages([]);
         setSelectedUser(user);
     }, [setMessages, setSelectedUser]);
-    
+
 
     return (
         <Sidebar variant="floating" {...props}>

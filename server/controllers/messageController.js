@@ -1,4 +1,5 @@
 import { Conversation } from "../models/conversationModel.js";
+import { decrypt, encrypt } from "../utils/feature.js";
 // import { Message } from "../models/messageModel.js";
 
 export const sendMessage = async (req, res, next) => {
@@ -24,7 +25,7 @@ export const sendMessage = async (req, res, next) => {
         }
 
         let gotConversation = await Conversation.findOne({
-            participants: { $all:[senderId, receiverId]},
+            participants: { $all: [senderId, receiverId] },
         });
 
         if (!gotConversation) {
@@ -41,7 +42,7 @@ export const sendMessage = async (req, res, next) => {
         // await newMessage.save();
 
         // if(newMessage){
-        gotConversation.messages.push({ message, createdAt: new Date(), user:senderId});
+        gotConversation.messages.push({ message: encrypt(message), createdAt: new Date(), user: senderId });
         await gotConversation.save();
         res.status(200).json({ message: "Msg sent Successfully", success: true })
         // };
@@ -66,7 +67,7 @@ export const getMessages = async (req, res, next) => {
             return next(error)
         }
         let gotConversation = await Conversation.findOne({
-            participants: {$all :[senderId, receiverId]},
+            participants: { $all: [senderId, receiverId] },
         });
 
         if (!gotConversation) {
@@ -76,8 +77,14 @@ export const getMessages = async (req, res, next) => {
             }
             return next(error)
         }
-        let messages = gotConversation.messages.sort((a, b) => a.createdAt - b.createdAt);
-        res.status(200).json({messages,success:true});
+        // let messages = gotConversation.messages.sort((a, b) => a.createdAt - b.createdAt);
+        let messages = gotConversation.messages
+            .sort((a, b) => a.createdAt - b.createdAt)
+            .map((msg) => ({
+                ...msg.toObject(),
+                message: decrypt(msg.message),
+            }));
+        res.status(200).json({ messages, success: true });
     }
     catch (err) {
         const error = {

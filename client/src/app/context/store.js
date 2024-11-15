@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
                 });
                 const result = await response.json();
                 if (result.success) {
-                    setUserInfo(result.user[0]);
+                    setUserInfo(result.user);
                 }
             } catch (error) {
                 console.error("Failed to fetch user" + error.message);

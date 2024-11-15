@@ -23,7 +23,6 @@ export default function Messages() {
                     const data = await response.json();
                     if (data.success) {
                         setMessages(data.messages);
-                        console.log("mes: ", data.messages);
                     } else {
                         toast.error("Failed to fetch messages.");
                     }
