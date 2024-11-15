@@ -59,11 +59,11 @@ export function AppSidebar({ ...props }) {
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarMenu className="gap-2">
-                        {filteredData.map((item) => (
+                        {filteredData.map((item,index) => (
                             <SidebarMenuItem
                                 className={`hover:bg-sidebar-hover transition-colors ${selectedUser === item.user?._id ? "bg-sidebar-selected" : ""
                                     }`}
-                                key={item?.user?._id}
+                                key={item?.user?._id || item?.user?.fullName || index}
                                 onClick={() => handleUserClick(item.user)}
                             >
                                 <SidebarMenuButton size="lg">
@@ -72,7 +72,7 @@ export function AppSidebar({ ...props }) {
                                             <AvatarImage src={item.user?.profilePhoto} />
                                         </Avatar>
                                         {
-                                            onlineUser?.includes(item.user?._id) && <span class="absolute top-1 left-8 transform -translate-y-1/2 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></span>
+                                            onlineUser?.includes(item.user?._id) && <span className="absolute top-1 left-8 transform -translate-y-1/2 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></span>
                                         }
                                     </div>
                                     <div className="flex flex-col gap-0.5 leading-none">

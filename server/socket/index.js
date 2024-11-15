@@ -8,7 +8,6 @@ export const server = http.createServer(app)
 const userSocketMap = {};
 const io = new Server(server, {
     cors: {
-        // origin: 'http://localhost:3000',
         origin: process.env.FRONTEND_URI,
         credentials: true
     }
@@ -19,7 +18,6 @@ io.on('connection', (socket) => {
     if (userId !== undefined) {
         userSocketMap[userId] = socket.id;
     }
-    console.log(socket.id);
     io.emit('getOnlineUsers', Object.keys(userSocketMap));
 
     socket.on('sendMessage', (messageData) => {
