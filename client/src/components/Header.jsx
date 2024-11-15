@@ -6,11 +6,9 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { Input } from './ui/input'
 import { SidebarTrigger } from './ui/sidebar'
-import { Separator } from './ui/separator'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './ui/breadcrumb'
 
 export default function Header() {
-    const { selectedUser, setSelectedUser, setUserInfo, onlineUser, isTyping, messages } = useAuth()
+    const { selectedUser, setSelectedUser, setUserInfo,searchMsg, setSearchMsg, onlineUser, isTyping, messages } = useAuth()
     const router = useRouter();
     const handleLogout = async () => {
         try {
@@ -54,13 +52,11 @@ export default function Header() {
                     type="text"
                     placeholder="Search Message..."
                     className=" w-[150px] text-center"
+                    value={searchMsg}
+                    onChange={(e) => setSearchMsg(e.target.value)}
                 />
             }
             <Button onClick={handleLogout}>Logout</Button>
         </header>
-        // <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
-        //     <SidebarTrigger className="-ml-1" />
-            
-        // </header>
     )
 }

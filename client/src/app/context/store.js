@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
             user: null
         }
     ]);
+    const [searchMsg, setSearchMsg] = useState("");
     // const [otherUsers, setOtherUsers] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [messages, setMessages] = useState([
@@ -112,7 +113,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ selectedUser, isTyping, onlineUser, socket, fetchOtherUsers, setSelectedUser, messages, otherUsers, setOtherUsers, setMessages, userInfo, setUserInfo }}
+            value={{ selectedUser,searchMsg, setSearchMsg, isTyping, onlineUser, socket, fetchOtherUsers, setSelectedUser, messages, otherUsers, setOtherUsers, setMessages, userInfo, setUserInfo }}
         >
             {children}
         </AuthContext.Provider>

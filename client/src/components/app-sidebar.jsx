@@ -17,7 +17,7 @@ import Fuse from "fuse.js";
 import { useAuth } from "@/app/context/store";
 
 export function AppSidebar({ ...props }) {
-        ; const [searchQuery, setSearchQuery] = React.useState("");
+    const [searchQuery, setSearchQuery] = React.useState("");
     const { selectedUser, setSelectedUser, setMessages,onlineUser, otherUsers } = useAuth();
 
     const fuse = React.useMemo(() => new Fuse(otherUsers, { keys: ["fullName"], threshold: 0.6 }), [otherUsers]);
