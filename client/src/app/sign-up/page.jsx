@@ -53,7 +53,7 @@ export default function Signup() {
             if (profilePicture) {
                 const imageFormData = new FormData();
                 imageFormData.append("file", profilePicture);
-                imageFormData.append("upload_preset", "urja_talents"); // Replace with your upload preset
+                imageFormData.append("upload_preset", process.env.NEXT_PUBLIC_UPLOAD_PRESENT); 
 
                 const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/dzgtgpypu/image/upload", {
                     method: "POST",
@@ -64,7 +64,6 @@ export default function Signup() {
                 profilePhotoUrl = cloudinaryData.secure_url;
             }
 
-            // Step 2: Send registration data to backend
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/register`, {
                 method: "POST",
                 headers: {

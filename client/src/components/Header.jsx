@@ -5,6 +5,9 @@ import { Button } from './ui/button'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { Input } from './ui/input'
+import { SidebarTrigger } from './ui/sidebar'
+import { Separator } from './ui/separator'
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './ui/breadcrumb'
 
 export default function Header() {
     const { selectedUser, setSelectedUser, setUserInfo, onlineUser, isTyping, messages } = useAuth()
@@ -28,6 +31,7 @@ export default function Header() {
     };
     return (
         <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 z-50 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
             {selectedUser && (
                 <div className="flex-1 flex gap-1 my-auto">
                     <div className="relative">
@@ -54,5 +58,9 @@ export default function Header() {
             }
             <Button onClick={handleLogout}>Logout</Button>
         </header>
+        // <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
+        //     <SidebarTrigger className="-ml-1" />
+            
+        // </header>
     )
 }

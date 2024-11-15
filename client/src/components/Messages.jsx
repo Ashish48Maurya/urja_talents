@@ -22,6 +22,7 @@ export default function Messages() {
                     const data = await response.json();
                     if (data.success) {
                         setMessages(data.messages);
+                        console.log("mes: ",data.messages);
                     } else {
                         toast.error("Failed to fetch messages.");
                     }
@@ -41,14 +42,14 @@ export default function Messages() {
             {messages.length === 0 ? (
                 <div className="flex flex-col h-full items-center justify-center text-center mt-10 p-4">
                     <img
-                       src={"/message.png" || "/default-image.png"}
+                        src={"/message.png" || "/default-image.png"}
                         alt="No messages"
                         className="w-24 h-24 mb-4 opacity-75"
                     />
                     <h2 className="text-lg font-semibold text-gray-600">No messages yet!</h2>
                     <p className="text-gray-500">Start the conversation by sending a message below.</p>
                 </div>
-                
+
             ) : (
                 messages.map((item, index) => (
                     <div ref={scroll} key={index}>
@@ -65,7 +66,12 @@ export default function Messages() {
                                     />
                                 </div>
                             </div>
-                            <div className={`chat-bubble ${item?.user !== selectedUser._id ? 'chat-bubble-success' : ''}`}>{item?.message}</div>
+                            {
+                                item?.message?.startsWith("https://")
+                                    ? <img src={item.message || "/default-profile.png"} alt="img" className="w-1/3 rounded-lg" />
+                                    : <div className={`chat-bubble ${item?.user !== selectedUser._id ? 'chat-bubble-success' : ''}`}>{item?.message}</div>
+                            }
+
                             <span className="text-xs text-black font-semibold">
                                 {new Date(item?.createdAt).toLocaleString("en-US", {
                                     month: "short",
