@@ -70,6 +70,10 @@ export default function MessageInp({ message, setMessage }) {
             }
         }
         else {
+            if(message.trim().length === 0){
+                toast.error("Message cannot be empty");
+                return;
+            }
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/message?id=${selectedUser?._id}`, {
                     method: "POST",

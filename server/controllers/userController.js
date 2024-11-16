@@ -2,7 +2,7 @@ import User from "../models/userModel.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { Conversation } from "../models/conversationModel.js";
-import { encrypt,decrypt } from "../utils/feature.js";
+import { encrypt, decrypt } from "../utils/feature.js";
 
 export const register = async (req, res, next) => {
     const { fullName, password, email, profilePhoto } = req.body;
@@ -12,6 +12,28 @@ export const register = async (req, res, next) => {
             message: "Please add all the fields"
         }
         return next(error)
+    }
+
+    const emailRegex = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+        return next({
+            statusCode: 400,
+            message: "Please enter a valid email address",
+        });
+    }
+
+    if (password.length < 8) {
+        return next({
+            statusCode: 400,
+            message: "Password must be at least 8 characters long",
+        });
+    }
+
+    if (fullName.trim().length === 0) {
+        return next({
+            statusCode: 400,
+            message: "Full name cannot be empty",
+        });
     }
 
     try {
@@ -25,10 +47,10 @@ export const register = async (req, res, next) => {
         }
         const hashedPassword = await bcrypt.hash(password, 12)
         const user = new User({
-            fullName : encrypt(fullName),
-            email : encrypt(email),
+            fullName: encrypt(fullName),
+            email: encrypt(email),
             password: hashedPassword,
-            profilePhoto : encrypt(profilePhoto)
+            profilePhoto: encrypt(profilePhoto)
         });
         await user.save();
         return res.status(200).json({ message: "Registration Successfull", success: true });
@@ -101,13 +123,13 @@ export const getOtherUsers = async (req, res) => {
         const decryptedUsers = otherUsers.map((user) => {
             const userObject = user.toObject();
             return {
-                ...userObject, 
+                ...userObject,
                 fullName: decrypt(userObject.fullName),
                 profilePhoto: userObject.profilePhoto ? decrypt(userObject.profilePhoto) : null,
                 email: decrypt(userObject.email),
             };
         });
-        const messages = await Conversation.find({participants: {$all :[senderId]}})
+        const messages = await Conversation.find({ participants: { $all: [senderId] } })
         const decryptedConversations = messages.map((conversation) => {
             const decryptedMessages = conversation.messages.map((msg) => ({
                 ...msg.toObject(),
@@ -120,7 +142,7 @@ export const getOtherUsers = async (req, res) => {
             };
         });
 
-        return res.status(200).json({ otherUsers:decryptedUsers,message:decryptedConversations, success: true });
+        return res.status(200).json({ otherUsers: decryptedUsers, message: decryptedConversations, success: true });
     } catch (err) {
         const error = {
             statusCode: 500,
@@ -141,11 +163,11 @@ export const logout = async (req, res) => {
     });
 }
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req, res, next) => {
     const userId = req.userID;
     const { fullName, password, email, profilePhoto } = req.body;
     try {
-        const existingUser = await User.findById({_id:userId  });
+        const existingUser = await User.findById({ _id: userId });
         const error = {
             statusCode: 404,
             message: "User doesn't exists!"
@@ -153,6 +175,29 @@ export const updateUser = async (req, res) => {
         if (!existingUser) {
             return next(error)
         }
+
+        const emailRegex = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
+        if (email && !emailRegex.test(email)) {
+            return next({
+                statusCode: 400,
+                message: "Please enter a valid email address",
+            });
+        }
+
+        if (password && password.length < 8) {
+            return next({
+                statusCode: 400,
+                message: "Password must be at least 8 characters long",
+            });
+        }
+
+        if (fullName && fullName.trim().length === 0) {
+            return next({
+                statusCode: 400,
+                message: "Full name cannot be empty",
+            });
+        }
+
         const updatedFields = {};
         if (fullName) updatedFields.fullName = encrypt(fullName);
         if (email) updatedFields.email = encrypt(email);

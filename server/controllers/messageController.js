@@ -7,6 +7,13 @@ export const sendMessage = async (req, res, next) => {
         const receiverId = req.query?.id;
         const { message } = req.body;
 
+        if(message.trim().length === 0){
+            return next({
+                statusCode: 400,
+                message: "Message cannot be empty",
+            });
+        }
+
         if (!senderId || !receiverId) {
             const error = {
                 statusCode: 404,

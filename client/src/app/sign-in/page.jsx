@@ -28,7 +28,7 @@ export default function Page() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
-    const {fetchOtherUsers} = useAuth();
+    const { fetchOtherUsers } = useAuth();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -81,12 +81,7 @@ export default function Page() {
                             />
                         </div>
                         <div className="grid gap-2">
-                            <div className="flex items-center">
-                                <Label htmlFor="password">Password</Label>
-                                <Link href="#" className="ml-auto inline-block text-sm underline">
-                                    Forgot your password?
-                                </Link>
-                            </div>
+                            <Label htmlFor="password">Password</Label>
                             <Input
                                 id="password"
                                 type="password"
