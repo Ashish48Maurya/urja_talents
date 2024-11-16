@@ -49,11 +49,4 @@ io.on('connection', (socket) => {
         }
         io.emit('getOnlineUsers', Object.keys(userSocketMap));
     });
-
-    socket.on('markAsSeen', ({userId, receiverId}) => {
-        const recipientSocketId = userSocketMap[receiverId];
-        if(recipientSocketId){
-            io.to(recipientSocketId).emit('messageSeen', { userId, receiverId });
-        }
-    });
 })
