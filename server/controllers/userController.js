@@ -141,6 +141,40 @@ export const logout = async (req, res) => {
     });
 }
 
+export const updateUser = async (req, res) => {
+    const userId = req.userID;
+    const { fullName, password, email, profilePhoto } = req.body;
+    try {
+        const existingUser = await User.findById({_id:userId  });
+        const error = {
+            statusCode: 404,
+            message: "User doesn't exists!"
+        }
+        if (!existingUser) {
+            return next(error)
+        }
+        const updatedFields = {};
+        if (fullName) updatedFields.fullName = encrypt(fullName);
+        if (email) updatedFields.email = encrypt(email);
+        if (password) updatedFields.password = await bcrypt.hash(password, 12);
+        if (profilePhoto) updatedFields.profilePhoto = encrypt(profilePhoto);
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $set: updatedFields },
+            { new: true, runValidators: true }
+        );
+        await updatedUser.save();
+        return res.status(200).json({ message: "Profile Updated Successfully", success: true });
+    } catch (err) {
+        const error = {
+            statusCode: 500,
+            message: err.message
+        }
+        next(error)
+    }
+}
+
 export const user = async (req, res, next) => {
     try {
         const loggedInUserId = req.userID;
