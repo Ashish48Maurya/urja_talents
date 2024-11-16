@@ -30,7 +30,7 @@ export function AppSidebar({ ...props }) {
         setMessages([]);
         setSelectedUser(user);
     }, [setMessages, setSelectedUser]);
-
+    
 
     return (
         <Sidebar variant="floating" {...props}>
@@ -59,7 +59,7 @@ export function AppSidebar({ ...props }) {
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarMenu className="gap-2">
-                        {filteredData.map((item,index) => (
+                        {filteredData.map((item, index) => (
                             <SidebarMenuItem
                                 className={`hover:bg-sidebar-hover transition-colors ${selectedUser === item.user?._id ? "bg-sidebar-selected" : ""
                                     }`}
@@ -77,7 +77,9 @@ export function AppSidebar({ ...props }) {
                                     </div>
                                     <div className="flex flex-col gap-0.5 leading-none">
                                         <span className="font-semibold mr-2">{item.user?.fullName}</span>
-                                        <span>{item.message}</span>
+                                        {
+                                            item?.message.startsWith('https://') ? <span>🖼️ Image</span> : <span>{item.message}</span>
+                                        }
                                     </div>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>

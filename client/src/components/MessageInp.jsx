@@ -4,10 +4,12 @@ import { Button } from './ui/button';
 import { IoAddCircle, IoSendSharp } from 'react-icons/io5';
 import { useAuth } from '@/app/context/store';
 import toast from 'react-hot-toast';
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export default function MessageInp({ message, setMessage }) {
-    const { selectedUser, setMessages, socket, userInfo } = useAuth();
+    const { selectedUser, setMessages, socket, userInfo, fetchOtherUsers } = useAuth();
     const [file, setFile] = useState(null)
+    const [loading, setLoading] = useState(false);
     const sendImg = useRef();
 
     const handleInpClick = () => {
@@ -18,12 +20,13 @@ export default function MessageInp({ message, setMessage }) {
         if (file) {
             try {
                 let imgMsg = "";
+                setLoading(true);
                 if (file) {
                     const imageFormData = new FormData();
                     imageFormData.append("file", file);
-                    imageFormData.append("upload_preset", process.env.NEXT_PUBLIC_UPLOAD_PRESENT);
+                    imageFormData.append("upload_preset", process.env.NEXT_PUBLIC_UPLOAD_PRESETS);
 
-                    const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/dzgtgpypu/image/upload", {
+                    const cloudinaryRes = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`, {
                         method: "POST",
                         body: imageFormData,
                     });
@@ -38,13 +41,13 @@ export default function MessageInp({ message, setMessage }) {
                         "Content-Type": "application/json",
                     },
                     credentials: "include",
-                    body: JSON.stringify({ message:imgMsg }),
+                    body: JSON.stringify({ message: imgMsg }),
                 });
                 const data = await response.json();
                 if (data.success) {
                     setMessages((prevMessages) => [
                         ...prevMessages,
-                        { message: imgMsg, createdAt: new Date() },
+                        { message: imgMsg, createdAt: new Date(), seen: false },
                     ]);
 
                     const messageData = {
@@ -54,6 +57,8 @@ export default function MessageInp({ message, setMessage }) {
                         createdAt: new Date(),
                     }
                     socket?.emit('sendMessage', messageData);
+                    fetchOtherUsers()
+                    setLoading(false);
                 } else {
                     toast.error("Message send failed:", data.message);
                 }
@@ -61,6 +66,7 @@ export default function MessageInp({ message, setMessage }) {
                 toast.error("Error sending message:" + error.message);
             } finally {
                 setFile(null);
+                setLoading(false);
             }
         }
         else {
@@ -77,7 +83,7 @@ export default function MessageInp({ message, setMessage }) {
                 if (data.success) {
                     setMessages((prevMessages) => [
                         ...prevMessages,
-                        { message, createdAt: new Date() },
+                        { message, createdAt: new Date(), seen: false },
                     ]);
 
                     const messageData = {
@@ -87,7 +93,7 @@ export default function MessageInp({ message, setMessage }) {
                         createdAt: new Date(),
                     }
                     socket?.emit('sendMessage', messageData);
-
+                    fetchOtherUsers()
                 } else {
                     toast.error("Message send failed:", data.message);
                 }
@@ -153,9 +159,13 @@ export default function MessageInp({ message, setMessage }) {
                     }
                 }}
             />
-            <Button className="mx-1" onClick={handleInpClick}>
-                <IoAddCircle className='text-xl' />
-            </Button>
+            {
+                loading ? <Button className="mx-1" onClick={handleInpClick} disabled={loading}>
+                    <AiOutlineLoading3Quarters className='text-xl'/>
+                </Button> : <Button className="mx-1" onClick={handleInpClick}>
+                    <IoAddCircle className='text-xl' />
+                </Button>
+            }
             <Button className="mr-1" onClick={handleMessageSend}>
                 <IoSendSharp />
             </Button>

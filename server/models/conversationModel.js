@@ -17,7 +17,8 @@ const conversationModel = new mongoose.Schema({
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
-        }
+        },
+        seen: { type: Boolean, default: false },
     }]
 });
 export const Conversation = mongoose.model("Conversation", conversationModel);

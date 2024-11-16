@@ -1,11 +1,12 @@
 "use client"
 import { useAuth } from '@/app/context/store'
 import Fuse from 'fuse.js';
+import Link from 'next/link';
 import React, { useEffect, useMemo, useRef } from 'react'
 import toast from 'react-hot-toast';
 
 export default function Messages() {
-    const { messages, selectedUser, userInfo, setMessages, searchMsg } = useAuth();
+    const { messages, selectedUser, userInfo, setMessages, socket, searchMsg } = useAuth();
     const scroll = useRef();
     useEffect(() => {
         scroll.current?.scrollIntoView({ behavior: "smooth" });
@@ -79,12 +80,20 @@ export default function Messages() {
                                                 ? selectedUser?.profilePhoto || '/default-profile.png'
                                                 : userInfo?.profilePhoto || '/default-profile.png'
                                         }
+
                                     />
                                 </div>
                             </div>
                             {
                                 item?.message?.startsWith("https://")
-                                    ? <img src={item.message || "/default-profile.png"} alt="img" className="w-1/3 rounded-lg" />
+
+                                    ? <Link href={item.message || "/default-profile.png"} target='_blank' className="block m-0 p-0 w-1/4">
+                                        <img
+                                            src={item.message || "/default-profile.png"}
+                                            alt="img"
+                                            className="w-full rounded-lg"
+                                        />
+                                    </Link>
                                     : <div className={`chat-bubble ${item?.user !== selectedUser._id ? 'chat-bubble-success' : ''}`}>{item?.message}</div>
                             }
 
@@ -97,6 +106,9 @@ export default function Messages() {
                                     hour12: true,
                                 })}
                             </span>
+                            {/* {
+                                item?.user === userInfo._id && <span>{item?.seen ? 'Seen' : 'Unseen'}</span>
+                            } */}
                         </div>
 
                     </div>

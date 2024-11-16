@@ -16,12 +16,14 @@ export const AuthProvider = ({ children }) => {
         }
     ]);
     const [searchMsg, setSearchMsg] = useState("");
-    // const [otherUsers, setOtherUsers] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [messages, setMessages] = useState([
         {
             message: "",
-            date: ""
+            createdAt: "",
+            // date: "",
+            seen: false,
+            user: null
         }
     ]);
 
@@ -45,6 +47,7 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         if (userInfo && userInfo._id) {
+            // const socketInstance = io(process.env.NEXT_PUBLIC_BACKEND_SOCKET_API, {
             const socketInstance = io("http://localhost:8000", {
                 query: {
                     userId: userInfo._id

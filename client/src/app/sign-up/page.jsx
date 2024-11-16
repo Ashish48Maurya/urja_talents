@@ -53,9 +53,9 @@ export default function Signup() {
             if (profilePicture) {
                 const imageFormData = new FormData();
                 imageFormData.append("file", profilePicture);
-                imageFormData.append("upload_preset", process.env.NEXT_PUBLIC_UPLOAD_PRESENT); 
+                imageFormData.append("upload_preset", process.env.NEXT_PUBLIC_UPLOAD_PRESETS); 
 
-                const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/dzgtgpypu/image/upload", {
+                const cloudinaryRes = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`, {
                     method: "POST",
                     body: imageFormData,
                 });

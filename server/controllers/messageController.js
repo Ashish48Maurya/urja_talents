@@ -1,6 +1,5 @@
 import { Conversation } from "../models/conversationModel.js";
 import { decrypt, encrypt } from "../utils/feature.js";
-// import { Message } from "../models/messageModel.js";
 
 export const sendMessage = async (req, res, next) => {
     try {
@@ -34,14 +33,6 @@ export const sendMessage = async (req, res, next) => {
             })
             await gotConversation.save();
         };
-        // const newMessage = new Message({
-        //     senderId,
-        //     receiverId,
-        //     message
-        // });
-        // await newMessage.save();
-
-        // if(newMessage){
         gotConversation.messages.push({ message: encrypt(message), createdAt: new Date(), user: senderId });
         await gotConversation.save();
         res.status(200).json({ message: "Msg sent Successfully", success: true })
