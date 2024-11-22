@@ -18,7 +18,7 @@ import { useAuth } from "@/app/context/store";
 
 export function AppSidebar({ ...props }) {
     const [searchQuery, setSearchQuery] = React.useState("");
-    const { selectedUser, setSelectedUser, setMessages, onlineUser, otherUsers } = useAuth();
+    const { selectedUser, setSelectedUser,userInfo, setMessages, onlineUser, otherUsers, fetchOtherUsers } = useAuth();
 
     const fuse = React.useMemo(() => new Fuse(otherUsers, { keys: ["user.fullName"], threshold: 0.6 }), [otherUsers]);
 
@@ -30,6 +30,10 @@ export function AppSidebar({ ...props }) {
         setMessages([]);
         setSelectedUser(user);
     }, [setMessages, setSelectedUser]);
+
+    React.useEffect(()=>{
+        fetchOtherUsers();
+    },[userInfo])
     
 
     return (

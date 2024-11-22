@@ -46,7 +46,6 @@ export default function Page() {
             const data = await response.json();
             if (data.success) {
                 toast.success("Login successful!");
-                fetchOtherUsers();
                 router.push('/')
             } else {
                 toast.error(data.message || "Login failed. Please try again.");
