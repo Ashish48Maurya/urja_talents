@@ -1,3 +1,45 @@
+## Tech Stack
+
+**Client:** NEXT JS
+
+**Server:** Node JS, Express JS
+
+**Database:** MONGO DB
+
+## Project Glimpse
+Register Page
+![image](https://github.com/Ashish48Maurya/urja_talents/blob/master/Pics/Screenshot%20(1).png)
+
+
+Login Page
+![image](https://github.com/Ashish48Maurya/urja_talents/blob/master/Pics/Screenshot%20(2).png)
+
+Profile Edit Page
+![image](https://github.com/Ashish48Maurya/urja_talents/blob/master/Pics/Screenshot%20(3).png)
+
+Ashish is going to start chatting with Shubham
+![image](https://github.com/Ashish48Maurya/urja_talents/blob/master/Pics/Screenshot%20(4).png)
+
+Shubham is going to start chatting with Ashish
+![image](https://github.com/Ashish48Maurya/urja_talents/blob/master/Pics/Screenshot%20(5).png)
+
+Users can send realtime text and image messages and can see online status of each other along with typing indicator. 
+![image](https://github.com/Ashish48Maurya/urja_talents/blob/master/Pics/Screenshot%20(6).png)
+
+
+Search Particular User
+![image](https://github.com/Ashish48Maurya/urja_talents/blob/master/Pics/Screenshot%20(7).png)
+
+
+Users Status
+![image](https://github.com/Ashish48Maurya/urja_talents/blob/master/Pics/Screenshot%20(8).png)
+
+
+Search Particular chat
+![image](https://github.com/Ashish48Maurya/urja_talents/blob/master/Pics/Screenshot%20(9).png)
+
+
+
 ## Step-1)First go to project directory
 ## Step-2)cd client  (go to client directory)
 
